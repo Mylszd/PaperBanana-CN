@@ -1,0 +1,26 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Model and API Configuration for PaperVizAgent
+
+# Default Models
+defaults:
+  model_name: "" # e.g., "gemini-3-pro-preview"
+  image_model_name: "" # e.g., "gemini-3-pro-image-preview"
+  
+# API Keys. If you are using all gemini models, you can leave the other keys empty.
+api_keys:
+  google_api_key: ""
+  openai_api_key: ""
+  anthropic_api_key: ""

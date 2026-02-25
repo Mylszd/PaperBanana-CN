@@ -1,0 +1,15 @@
+google-genai
+streamlit
+asyncio
+aiofiles
+aiohttp
+pillow
+numpy
+tqdm
+json_repair
+anthropic
+openai
+matplotlib
+python-dotenv
+pyyaml
+google-auth

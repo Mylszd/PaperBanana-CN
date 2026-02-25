@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="PaperBanana: Automating Academic Illustration for AI Scientists">
+    <meta name="keywords"
+        content="PaperBanana, Academic Illustration, Diagram Generation, Statistical Plots, Multi-Agent Framework, Gemini">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PaperBanana: Automating Academic Illustration for AI Scientists</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+
+    <link rel="icon" href="./static/images/logo.ico">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-widescreen">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <!-- <h1 class="title is-1 publication-title">
+                            <img src="static/images/logo.png" style="width:1.5em;vertical-align: middle">
+                            <span>DocLens</span>
+                        </h1> -->
+                        <h1 class="subtitle is-3 publication-title">
+                            <img src="static/images/logo.jpg"
+                                style="width:1.5em;vertical-align: middle; border-radius: 50%;">
+                            <b>PaperBanana:</b> Automating Academic Illustration for AI Scientists
+                        </h1>
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=oD2HPaYAAAAJ&hl=en"
+                                    target="_blank">Dawei Zhu</a><sup>1,2*</sup>,
+                            </span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=s6h8L_UAAAAJ&hl=en&oi=ao"
+                                    target="_blank">Rui Meng</a><sup>2</sup>,
+                            </span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=dNHNpxoAAAAJ&hl=en&oi=ao"
+                                    target="_blank">Yale Song</a><sup>2</sup>,
+                            </span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=J_RHFhUAAAAJ&hl=en&oi=ao"
+                                    target="_blank">Xiyu Wei</a><sup>1</sup>,
+                            </span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=RvBDhSwAAAAJ&hl=en&oi=ao"
+                                    target="_blank">Sujian Li</a><sup>1</sup>,
+                            </span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=ahSpJOAAAAAJ&hl=en&oi=ao"
+                                    target="_blank">Tomas Pfister</a><sup>2</sup>,
+                            </span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=kiFd6A8AAAAJ&hl=en&oi=ao"
+                                    target="_blank">Jinsung Yoon</a><sup>2</sup>
+                            </span>
+                        </div>
+
+                        <br>
+
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block"><sup>1</sup>Peking University</span>&nbsp;&nbsp;&nbsp; <br>
+                            <span class="author-block"><sup>2</sup>Google Cloud AI Research</span>
+                        </div>
+
+                        <br>
+
+                        <div class="is-size-5 thanks">
+                            <span class="author-block">Corresponding author(s):</span>
+                            <span class="author-block"><a href="mailto:dwzhu@pku.edu.cn">dwzhu@pku.edu.cn</a>,</span>
+                            <span class="author-block"><a
+                                    href="mailto:lisujian@pku.edu.cn">lisujian@pku.edu.cn</a>,</span>
+                            <span class="author-block"><a
+                                    href="mailto:jinsungyoon@google.com">jinsungyoon@google.com</a></span>
+                        </div>
+
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <span class="link-block">
+                                    <!-- Replace with your actual arXiv link -->
+                                    <a href="https://arxiv.org/abs/2601.23265" target="_blank"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="ai ai-arxiv"></i>
+                                        </span>
+                                        <span>arXiv</span>
+                                    </a>
+                                </span>
+                                <!-- Code Link. -->
+                                <span class="link-block">
+                                    <a href="https://github.com/dwzhu-pku/PaperBanana" target="_blank"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a>
+                                </span>
+                                <!-- Twitter Link. -->
+                                <span class="link-block">
+                                    <a href="https://x.com/dwzhu128/status/2018405593976103010"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon has-text-white">
+                                            <i class="fa-brands fa-x-twitter"></i>
+                                        </span>
+                                        <span>Twitter</span>
+                                    </a>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="hero teaser">
+        <div class="container is-max-desktop">
+            <div class="content has-text-centered">
+                <img src="static/images/teaser_figure.jpg" alt="PaperBanana Workflow" width="95%" />
+                <p class="is-size-6">
+                    Examples of methodology diagrams and statistical plots generated by <b>PaperBanana</b>, which show
+                    the potential of automating the generation of academic illustrations.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section hero is-light">
+        <div class="container is-max-desktop">
+            <!-- Abstract -->
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <!-- <h2 class="title is-3">Abstract</h2> -->
+                    <div class="content has-text-justified">
+                        <p>
+                            Despite rapid advances in autonomous AI scientists powered by language models, generating
+                            publication-ready illustrations remains a labor-intensive bottleneck in the research
+                            workflow.
+                            To lift this burden, we introduce <b>PaperBanana</b>, an agentic framework for automated
+                            generation of publication-ready academic illustrations.
+                            Powered by state-of-the-art VLMs and image generation models,
+                            PaperBanana orchestrates specialized agents to retrieve references, plan content and style,
+                            render images, and iteratively refine via self-critique.
+                            To rigorously evaluate our framework, we introduce <b>PaperBananaBench</b>, comprising 292
+                            test cases for methodology diagrams curated from NeurIPS 2025 publications, covering diverse
+                            research domains and illustration styles.
+                            Comprehensive experiments demonstrate that PaperBanana consistently outperforms leading
+                            baselines in faithfulness, conciseness, readability, and aesthetics.
+                            We further show that our method effectively extends to the generation of high-quality
+                            statistical plots.
+                            Collectively,
+                            PaperBanana paves the way for the automated generation of publication-ready illustrations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Method Overview</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We propose PaperBanana, a reference-driven agentic framework for automated academic
+                            illustration. As illustrated in the diagram (<b>generated by <img
+                                    src="static/images/logo.jpg"
+                                    style="width:1.0em;vertical-align: middle; border-radius: 50%;"></b>) below,
+                            PaperBanana
+                            orchestrates a collaborative
+                            team of five specialized agents—Retriever, Planner, Stylist, Visualizer, and Critic—to
+                            transform raw scientific content into publication-quality diagrams and plots.
+                        </p>
+                    </div>
+                    <img id="model" width="100%" src="static/images/method_diagram.png">
+
+                    <br>
+
+                    <div class="content has-text-justified">
+                        <ul>
+                            <li><strong>Retriever Agent</strong>: Identifies relevant reference examples to guide
+                                downstream agents.</li>
+                            <li><strong>Planner Agent</strong>: Acts as the cognitive core, translating context into
+                                detailed textual descriptions.</li>
+                            <li><strong>Stylist Agent</strong>: Ensures adherance to academic aesthetic standards by
+                                synthesizing guidelines from references.</li>
+                            <li><strong>Visualizer Agent</strong>: Transforms textual descriptions into visual output or
+                                executable code.</li>
+                            <li><strong>Critic Agent</strong>: Inspects generated images/plots against the source to
+                                provide feedback for refinement.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Benchmark Construction</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            The lack of benchmarks hinders rigorous evaluation of automated diagram generation.
+                            We address this with <b>PaperBananaBench</b>, a dedicated benchmark curated from NeurIPS
+                            2025 methodology diagrams,
+                            capturing the sophisticated aesthetics and diverse logical compositions of modern AI papers.
+                            The construction pipeline ensures high quality through: (1) Collection & Parsing, (2)
+                            Filtering, (3) Categorization, and (4) Human Curation. The final dataset comprises 584
+                            valid samples, partitioned into 292 test and 292 reference cases.
+                        </p>
+                    </div>
+                    <img src="static/images/plot_bench_stat.jpg" width="60%">
+                    <p class="is-size-7 has-text-centered">
+                        [Plot generated by <img src="static/images/logo.jpg"
+                            style="width:1.0em;vertical-align: middle; border-radius: 50%;"> from raw data] Statistics
+                        of the test set
+                        of PaperBananaBench (totaling 292 samples). The average length of source context / figure
+                        caption is 3,020.1 / 70.4 words.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Experimental Results</h2>
+
+
+                    <!-- <h3 class="title is-4">Main Results</h3> -->
+                    <div class="content has-text-justified">
+                        <p>
+                            We evaluate PaperBanana on <b>PaperBananaBench</b>, assessing performance across
+                            faithfulness, conciseness, readability, and aesthetics. Our method consistently
+                            outperforms leading baselines across all four evaluation dimensions.
+                        </p>
+                    </div>
+                    <img src="static/images/main_results.png" alt="Main Results of PaperBanana" width="100%">
+                    <br>
+                    <br>
+                    <br>
+                    <div class="content has-text-justified">
+                        <p>
+                            We further show that our method also seamlessly extends to the generation of high-quality
+                            statistical plots.
+                            The plot below was itself <b>generated by <img src="static/images/logo.jpg"
+                                    style="width:1.0em;vertical-align: middle; border-radius: 50%;"></b> from our raw
+                            data.
+                        </p>
+                    </div>
+                    <img src="static/images/plot_vanilla_vs_ours_v2.jpg" alt="Statistical Plots Comparison" width="80%">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Two Advanced Applications</h2>
+
+
+                    <div class="content has-text-justified">
+                        <p>
+                            <b>1. Enhancing Aesthetics of Human-Drawn Diagrams.</b> We explore using our summarized
+                            aesthetic guidelines to elevate the aesthetic quality of
+                            existing human-drawn diagrams. Below is an example:
+                        </p>
+                    </div>
+                    <img src="static/images/discussion_enhance_style.jpg" width="80%">
+                    <br>
+
+                    <div class="content has-text-justified">
+                        <p>
+                            <b>2. Coding vs Image Generation for Visualizing Statistical Plots.</b> We explore using
+                            image generation models for statistical plots generation, comparing with code-based
+                            approaches. The results below reveal distinct trade-offs: image generation excels in
+                            presentation but underperforms in content fidelity. [The plot below was itself generated by
+                            <img src="static/images/logo.jpg"
+                                style="width:1.0em;vertical-align: middle; border-radius: 50%;">, from our raw data]
+                        </p>
+                    </div>
+                    <img src="static/images/plot_code_vs_img.jpg" alt="Code vs Image Generation" width="80%">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-3">Case Study</h2>
+                    <div class="content has-text-justified">
+                    </div>
+                    <div id="results-carousel" class="carousel results-carousel" data-slides-to-scroll="1">
+                        <div class="item">
+                            <div class="content has-text-justified is-size-6" style="padding: 1rem;">
+                                <p>
+                                    <b>Case Study of Diagram Generation.</b> Given the same source context and caption,
+                                    the vanilla Nano-Banana-Pro often produces diagrams with outdated color tones and
+                                    overly verbose content. In contrast, our PaperBanana generates results that are more
+                                    concise and aesthetically pleasing, while maintaining faithfulness to the source
+                                    context.
+                                </p>
+                            </div>
+                            <img src="static/images/case_diagram.png" width="100%">
+                        </div>
+                        <div class="item">
+                            <div class="content has-text-justified is-size-6" style="padding: 1rem;">
+                                <p>
+                                    <b>Enhancing Aesthetics.</b> Additional cases for enhancing the aesthetics of
+                                    human-drawn diagrams with our auto-summarized style guidelines. The polished
+                                    diagrams demonstrate significant stylistic improvements in color schemes,
+                                    typography, graphical elements, etc.
+                                </p>
+                            </div>
+                            <img src="static/images/case_style_polish.png" width="100%">
+                        </div>
+                        <div class="item">
+                            <div class="content has-text-justified is-size-6" style="padding: 1rem;">
+                                <p>
+                                    <b>Visualizing Statistical Plots.</b> Case study for visualizing statistical plots
+                                    with code and image generation. It is observed that the image generation model can
+                                    generate more visually appealing plots, but incurs more faithfulness errors such as
+                                    numerical hallucination or element repetition.
+                                </p>
+                            </div>
+                            <img src="static/images/case_plot_img_vs_code.png" width="100%">
+                        </div>
+                        <div class="item">
+                            <div class="content has-text-justified is-size-6" style="padding: 1rem;">
+                                <p>
+                                    <b>Failure Cases.</b> The primary failure mode involves connection errors, such as
+                                    redundant connections and mismatched source-target nodes. Our preliminary analysis
+                                    reveals that the critic model often fails to identify these connectivity issues,
+                                    suggesting these errors may originate from the foundation model's inherent
+                                    perception limitations.
+                                </p>
+                            </div>
+                            <img src="static/images/case_failure.png" width="100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <pre><code>
+            </code></pre>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <!-- Replace with your paper's link -->
+                <a class="icon-link" target="_blank" href="https://arxiv.org/abs/2601.23265">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+                <!-- Replace with your code's link -->
+                <a class="icon-link" href="https://github.com/dwzhu-pku/PaperBanana" target="_blank"
+                    class="external-link">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content">
+                        <p>
+                            This website is licensed under a <a rel="license" target="_blank"
+                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                                Commons Attribution-ShareAlike 4.0 International License</a>.
+                        </p>
+                        <p>
+                            This means you are free to borrow the <a target="_blank"
+                                href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
+                            we just ask that you link back to this page in the footer.
+                            Please remember to remove the analytics code included in the header of the website which
+                            you do not want on your website.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
