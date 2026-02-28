@@ -166,7 +166,7 @@ async def process_parallel_candidates(data_list, exp_mode="dev_planner_critic", 
 
     # 并行处理所有候选方案（并发量由处理器控制）
     results = []
-    concurrent_num = 10  # 10 个候选方案同时并行处理
+    concurrent_num = 3  # 控制并发量，避免触发 API 限流 (429)
 
     try:
         async for result_data in processor.process_queries_batch(
