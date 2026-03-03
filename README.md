@@ -96,6 +96,28 @@ AI 驱动的学术论文配图生成工具 — 粘贴论文方法章节，自动
 
 之后每次启动只需几秒。
 
+### （可选）下载参考数据集
+
+程序内置了「检索 Agent」，可以从参考图库中找到相似的学术配图作为生成参考，提升生成质量。如需此功能，请下载数据集：
+
+1. 前往 [PaperBananaBench](https://huggingface.co/datasets/dwzhu/PaperBananaBench) 下载数据集
+2. 将下载的内容放到项目的 `data/PaperBananaBench/` 目录下，结构如下：
+
+```
+data/
+└── PaperBananaBench/
+    ├── diagram/
+    │   ├── images/        ← 论文配图图片
+    │   ├── ref.json       ← 参考数据
+    │   └── test.json
+    └── plot/
+        ├── images/        ← 论文图表图片
+        ├── ref.json
+        └── test.json
+```
+
+> 不下载也能正常使用，只需在侧边栏将「检索设置」改为 `none`，此时跳过参考图检索，不影响其他功能。
+
 ### 第三步：使用
 
 1. 在左侧边栏选择 API 提供商，填入 API Key
