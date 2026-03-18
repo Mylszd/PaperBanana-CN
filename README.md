@@ -136,8 +136,8 @@ data/
 |--------|------|
 | API Provider | Evolink（国内直连）或 Gemini（需翻墙） |
 | API Key | 对应提供商的密钥 |
-| 文本模型 | 用于规划/评审的模型（默认 gemini-2.5-flash） |
-| 图像模型 | 用于生成图片的模型（默认 nano-banana-2-lite） |
+| 文本模型 | 用于规划/评审的模型（默认 gemini-2.5-flash），可直接修改 |
+| 图像模型 | 用于生成图片的模型（默认 nano-banana-2-beta），可直接修改 |
 | 流水线模式 | `demo_planner_critic`（快速）或 `demo_full`（含风格化，更美观） |
 | 检索设置 | auto / auto-full / random / none，详见上方 [检索费用对比](#-智能检索省-96-api-费用) |
 | 候选方案数量 | 1-20，建议 3-5 个 |
@@ -186,6 +186,12 @@ A: 5 个候选方案通常需要 10-15 分钟。单个候选约 2-3 分钟。
 
 **Q: 可以不用参考数据集吗？**
 A: 可以。将检索设置改为 `none` 即可，此时不需要 `data/` 目录中的数据集。
+
+**Q: 可以在界面上换模型吗？**
+A: 可以。侧边栏的「文本模型」和「图像模型」输入框可以直接编辑，输入任何兼容的模型名称即可生效。切换 API Provider 时模型名会自动重置为对应默认值。
+
+**Q: Windows 上报错 `module 'time' has no attribute 'tzset'`？**
+A: 已修复。请拉取最新代码（`git pull`）即可解决。
 
 **Q: 如何停止程序？**
 A: macOS 在终端按 `Ctrl+C`；Windows 关闭命令行窗口即可。
