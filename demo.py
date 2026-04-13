@@ -878,9 +878,10 @@ The framework extends to statistical plots by adjusting the Visualizer and Criti
                     else:
                         with st.spinner(f"正在将图像精修至 {refine_resolution} 分辨率... 这可能需要一分钟。"):
                             try:
-                                # 将 PIL 图像转换为字节
+                                # 将 PIL 图像转换为字节（确保转为 RGB，避免调色板模式无法保存为 JPEG）
                                 img_byte_arr = BytesIO()
-                                uploaded_image.save(img_byte_arr, format='JPEG')
+                                save_image = uploaded_image.convert('RGB') if uploaded_image.mode not in ('RGB', 'L') else uploaded_image
+                                save_image.save(img_byte_arr, format='JPEG')
                                 image_bytes = img_byte_arr.getvalue()
 
                                 # 调用精修 API
