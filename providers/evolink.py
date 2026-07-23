@@ -191,7 +191,7 @@ class EvolinkProvider(BaseProvider):
         async with session.get(
             url,
             headers=self._get_headers(),
-            timeout=aiohttp.ClientTimeout(total=30),
+            timeout=aiohttp.ClientTimeout(total=60),  # 弱网下留足单次轮询的余量
         ) as resp:
             status = resp.status
             body = await resp.json()
@@ -200,17 +200,45 @@ class EvolinkProvider(BaseProvider):
             resp.raise_for_status()
             return body
 
-    async def _download_image_as_base64(self, url: str) -> Optional[str]:
-        """从 URL 下载图片并转换为 base64"""
-        try:
-            session = await self._get_session()
-            async with session.get(url, timeout=aiohttp.ClientTimeout(total=60)) as resp:
-                resp.raise_for_status()
-                image_data = await resp.read()
-                return base64.b64encode(image_data).decode("utf-8")
-        except Exception as e:
-            print(f"下载图片失败 ({url}): {e}")
-            return None
+    async def _download_image_as_base64(
+        self,
+        url: str,
+        max_attempts: int = 4,
+        retry_delay: float = 3,
+    ) -> Optional[str]:
+        """从 URL 下载图片并转换为 base64。
+
+        针对弱网做了强化：
+        - 用 sock_connect + sock_read 超时替代固定 total：只要数据在持续到达就不会
+          被误判超时，避免「大图慢速但正常下载」被当成失败（2K/4K 图可能好几 MB）；
+        - 下载失败会就地重试（指数退避），而不会连累上游 generate_image 重新提交
+          一个全新的生成任务（那样既浪费额度，弱网下也照样下载失败）。
+        """
+        # sock_connect: 建连超时；sock_read: 两次数据到达之间的最大间隔（不是整体时长）。
+        # 只要有数据在持续到达，sock_read 计时就会被重置，慢速大图能一直下完；
+        # 仅当连续 sock_read 秒没有任何数据到达才判超时。total=None 表示不设整体上限。
+        timeout = aiohttp.ClientTimeout(total=None, sock_connect=30, sock_read=120)
+        last_err = None
+        for attempt in range(max_attempts):
+            try:
+                session = await self._get_session()
+                async with session.get(url, timeout=timeout) as resp:
+                    resp.raise_for_status()
+                    image_data = await resp.read()
+                    if not image_data:
+                        raise ValueError("下载内容为空")
+                    return base64.b64encode(image_data).decode("utf-8")
+            except Exception as e:
+                last_err = e
+                current_delay = min(retry_delay * (2 ** attempt), 30)
+                print(
+                    f"[Evolink 图像] 下载图片第 {attempt + 1}/{max_attempts} 次失败: {e}。"
+                    f"{current_delay}s 后仅重试下载（不会重新生成图片）..."
+                )
+                if attempt < max_attempts - 1:
+                    await asyncio.sleep(current_delay)
+        print(f"下载图片最终失败 ({url}): {last_err}")
+        return None
 
     # ==================== 文件上传 ====================
 
@@ -373,11 +401,28 @@ class EvolinkProvider(BaseProvider):
 
                 # 步骤 2：轮询任务状态
                 poll_url = f"{self.base_url}/v1/tasks/{task_id}"
+                poll_errors = 0        # 连续轮询网络错误计数
+                max_poll_errors = 5    # 容忍的连续轮询错误次数
                 for poll_count in range(max_polls):
                     if poll_interval > 0:
                         await asyncio.sleep(poll_interval)
 
-                    poll_response = await self._get_json(poll_url)
+                    # 轮询的瞬时网络错误：原地重试【同一个 task_id】，不重新提交生成任务，
+                    # 避免弱网瞬断导致白白重生成（与下载失败属于同一类问题）。
+                    try:
+                        poll_response = await self._get_json(poll_url)
+                    except Exception as e:
+                        poll_errors += 1
+                        print(
+                            f"[Evolink 图像] 轮询任务 {task_id} 第 {poll_count + 1} 次网络错误"
+                            f"（连续 {poll_errors}/{max_poll_errors}）: {e}，稍后重试同一任务..."
+                        )
+                        if poll_errors >= max_poll_errors:
+                            print(f"[Evolink 图像] 轮询连续 {max_poll_errors} 次失败，放弃当前任务")
+                            break
+                        continue
+                    poll_errors = 0  # 成功轮询一次即清零
+
                     status = poll_response.get("status", "")
                     progress = poll_response.get("progress", 0)
 
@@ -387,12 +432,20 @@ class EvolinkProvider(BaseProvider):
                         if results:
                             image_url = results[0]
                             print(f"[Evolink 图像] 任务完成，下载图片: {image_url[:80]}...")
+                            # _download_image_as_base64 内部已带弱网重试；返回 None 表示
+                            # 多次下载仍失败
                             b64_image = await self._download_image_as_base64(image_url)
                             if b64_image:
                                 return [b64_image]
-                            else:
-                                print(f"[Evolink 图像] 图片下载失败")
-                                break
+                            # 关键修复：任务其实已成功生成图片，只是弱网下载不回来。
+                            # 此时【不再重新提交生成任务】——重生成既浪费额度，弱网下
+                            # 也照样下载失败，只会恶性循环。直接返回错误。
+                            context_msg = f" ({error_context})" if error_context else ""
+                            print(
+                                f"[Evolink 图像] 图片下载多次失败{context_msg}，任务已生成但取回失败，"
+                                f"不再重新提交生成任务。"
+                            )
+                            return ["Error"]
                         else:
                             print(f"[Evolink 图像] 任务完成但无图片结果")
                             break

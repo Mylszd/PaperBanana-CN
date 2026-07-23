@@ -325,6 +325,129 @@ class TestImageGeneration:
         assert "image_urls" in captured_payload
         assert captured_payload["image_urls"] == ["https://example.com/ref.png"]
 
+    @pytest.mark.asyncio
+    async def test_download_failure_does_not_resubmit_task(self):
+        """弱网核心 bug：任务已 completed、拿到图片 URL，但下载失败时，
+        不应重新提交一个全新的生成任务（避免浪费额度、弱网下恶性循环）。"""
+        p = make_provider()
+
+        create_response = {"id": "task-dl-fail", "status": "pending"}
+        completed_response = {
+            "id": "task-dl-fail",
+            "status": "completed",
+            "progress": 100,
+            "results": ["https://example.com/img.png"],
+        }
+
+        post_count = 0
+        async def counting_post(url, payload):
+            nonlocal post_count
+            post_count += 1
+            return create_response
+
+        # _download_image_as_base64 返回 None 表示（内部重试后）下载彻底失败
+        with patch.object(p, '_post_json', side_effect=counting_post), \
+             patch.object(p, '_get_json', new_callable=AsyncMock, return_value=completed_response), \
+             patch.object(p, '_download_image_as_base64', new_callable=AsyncMock, return_value=None):
+
+            result = await p.generate_image(
+                model_name="nano-banana-2-lite",
+                prompt="Test",
+                aspect_ratio="16:9",
+                quality="2K",
+                max_attempts=3,   # 即便允许 3 次，也不应因下载失败而重试生成
+                retry_delay=0,
+                poll_interval=0,
+            )
+
+        assert result == ["Error"]
+        # 只创建了一次任务：下载失败没有触发重新提交生成任务
+        assert post_count == 1
+
+    @pytest.mark.asyncio
+    async def test_download_image_retries_then_succeeds(self):
+        """下载自身应带重试：前两次失败、第三次成功，最终返回 base64。"""
+        p = make_provider()
+        png_bytes = base64.b64decode(make_png_base64())
+
+        class _FakeGetCtx:
+            def __init__(self, resp=None, exc=None):
+                self._resp = resp
+                self._exc = exc
+            async def __aenter__(self):
+                if self._exc:
+                    raise self._exc
+                return self._resp
+            async def __aexit__(self, *a):
+                return False
+
+        ok_resp = MagicMock()
+        ok_resp.raise_for_status = MagicMock()
+        ok_resp.read = AsyncMock(return_value=png_bytes)
+
+        call_count = 0
+        def fake_get(url, timeout=None):
+            nonlocal call_count
+            call_count += 1
+            if call_count < 3:
+                return _FakeGetCtx(exc=asyncio.TimeoutError())
+            return _FakeGetCtx(resp=ok_resp)
+
+        fake_session = MagicMock()
+        fake_session.get = fake_get
+
+        with patch.object(p, '_get_session', new_callable=AsyncMock, return_value=fake_session), \
+             patch('providers.evolink.asyncio.sleep', new_callable=AsyncMock):
+            result = await p._download_image_as_base64(
+                "https://example.com/img.png", max_attempts=4, retry_delay=0
+            )
+
+        assert result is not None
+        assert call_count == 3
+
+    @pytest.mark.asyncio
+    async def test_poll_transient_error_does_not_resubmit_task(self):
+        """弱网轮询瞬断：应原地重试同一个 task_id，而不是重新提交生成任务。"""
+        p = make_provider()
+
+        create_response = {"id": "task-poll", "status": "pending"}
+        completed_response = {
+            "id": "task-poll",
+            "status": "completed",
+            "progress": 100,
+            "results": ["https://example.com/img.png"],
+        }
+
+        post_count = 0
+        async def counting_post(url, payload):
+            nonlocal post_count
+            post_count += 1
+            return create_response
+
+        # 前两次轮询抛网络错误，第三次返回 completed
+        with patch.object(p, '_post_json', side_effect=counting_post), \
+             patch.object(p, '_get_json', new_callable=AsyncMock,
+                          side_effect=[Exception("network blip"),
+                                       Exception("network blip"),
+                                       completed_response]), \
+             patch.object(p, '_download_image_as_base64', new_callable=AsyncMock,
+                          return_value=make_png_base64()):
+
+            result = await p.generate_image(
+                model_name="nano-banana-2-lite",
+                prompt="Test",
+                aspect_ratio="16:9",
+                quality="2K",
+                max_attempts=3,
+                retry_delay=0,
+                poll_interval=0,
+            )
+
+        assert len(result) == 1
+        assert result[0] is not None
+        # 轮询瞬断被就地重试，没有触发重新提交任务
+        assert post_count == 1
+
 
 # ==================== 请求构建测试 ====================
 
